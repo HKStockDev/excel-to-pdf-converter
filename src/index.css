@@ -1,26 +1,23 @@
 :root {
-  --primary: #1f4e79;
-  --primary-light: #2d6ba3;
-  --primary-bg: #d9eaf7;
-  --text: #3a5568;
-  --text-h: #1f4e79;
-  --text-muted: #5a7390;
-  --bg: #d9eaf7;
+  --primary: #0f172a;
+  --primary-light: #1e293b;
+  --accent: #f97316;
+  --accent-light: #fb923c;
+  --accent-bg: rgba(249, 115, 22, 0.1);
+  --accent-border: rgba(249, 115, 22, 0.35);
+  --text: #334155;
+  --text-h: #0f172a;
+  --text-muted: #64748b;
+  --bg: #f8fafc;
   --surface: #ffffff;
-  --surface-elevated: #eef6fc;
-  --border: #b8d4ea;
-  --accent: #1f4e79;
-  --accent-light: #2d6ba3;
-  --accent-bg: rgba(31, 78, 121, 0.08);
-  --accent-border: rgba(31, 78, 121, 0.25);
-  --gold: #b8975a;
-  --gold-bg: rgba(184, 151, 90, 0.12);
+  --surface-elevated: #fff7ed;
+  --border: #e2e8f0;
   --success: #1f6b45;
   --success-bg: rgba(31, 107, 69, 0.1);
   --error: #b42318;
   --error-bg: rgba(180, 35, 24, 0.08);
-  --shadow-sm: 0 1px 3px rgba(31, 78, 121, 0.08);
-  --shadow-md: 0 8px 24px rgba(31, 78, 121, 0.12);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
   --radius: 5px;
   --radius-lg: 5px;
 
@@ -46,7 +43,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #e8f3fb 0%, #d9eaf7 45%, #cfe3f3 100%);
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #f1f5f9 100%);
 }
 
 #root {

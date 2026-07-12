@@ -2,9 +2,9 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--accent);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 2px 12px rgba(31, 78, 121, 0.2);
+  background: var(--primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.22);
 }
 
 .page-header__inner {
@@ -80,20 +80,18 @@
 
 .page-header__nav button {
   padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius);
   background: transparent;
   color: rgba(255, 255, 255, 0.92);
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s;
   white-space: nowrap;
 }
 
 .page-header__nav button:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .app {
@@ -152,14 +150,12 @@
 .app__footer {
   margin-top: clamp(32px, 6vw, 56px);
   padding-top: 24px;
-  border-top: 1px solid var(--border);
   text-align: center;
   font-size: 0.875rem;
   color: var(--text-muted);
 }
 
 .pdf-settings {
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: clamp(16px, 3vw, 24px);
   background: var(--surface);
@@ -226,17 +222,15 @@
 .pdf-settings__field input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--border);
   border-radius: 5px;
   background: var(--surface-elevated);
   color: var(--text-h);
   font-size: 0.925rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: box-shadow 0.2s;
 }
 
 .pdf-settings__field input:focus {
   outline: none;
-  border-color: var(--accent-border);
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
@@ -252,24 +246,21 @@
 }
 
 .dropzone {
-  border: 2px dashed var(--border);
   border-radius: var(--radius-lg);
   padding: clamp(32px, 6vw, 52px) clamp(16px, 4vw, 28px);
   text-align: center;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .dropzone:hover:not(.dropzone--disabled) {
-  border-color: var(--accent-border);
   background: var(--accent-bg);
   box-shadow: var(--shadow-md);
 }
 
 .dropzone--active {
-  border-color: var(--accent);
   background: var(--accent-bg);
   transform: scale(1.005);
 }
@@ -354,7 +345,6 @@
 
 .file-table-wrap {
   overflow-x: auto;
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
@@ -368,7 +358,6 @@
 
 .file-table thead {
   background: var(--surface-elevated);
-  border-bottom: 1px solid var(--border);
 }
 
 .file-table th {
@@ -387,12 +376,7 @@
 }
 
 .file-table__row {
-  border-bottom: 1px solid var(--border);
   transition: background 0.15s;
-}
-
-.file-table__row:last-child {
-  border-bottom: none;
 }
 
 .file-table__row:hover {
@@ -465,7 +449,6 @@
   padding: 6px 10px;
   border-radius: 5px;
   background: var(--surface-elevated);
-  border: 1px solid var(--border);
   font-size: 0.825rem;
 }
 
@@ -500,8 +483,8 @@
 .file-table__badge--uploading,
 .file-table__badge--converting,
 .file-table__badge--downloading {
-  background: var(--gold-bg);
-  color: var(--gold);
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .file-table__badge--converted,
@@ -559,7 +542,6 @@
   height: 8px;
   border-radius: 5px;
   background: var(--surface-elevated);
-  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -574,11 +556,11 @@
 }
 
 .progress__fill--upload {
-  background: linear-gradient(90deg, #1f4e79, #2d6ba3);
+  background: linear-gradient(90deg, #0f172a, #1e293b);
 }
 
 .progress__fill--convert {
-  background: linear-gradient(90deg, #b8975a, #d4b87a);
+  background: linear-gradient(90deg, #f97316, #fb923c);
 }
 
 .progress__fill--download {
@@ -632,18 +614,15 @@
 .button--secondary {
   background: var(--surface);
   color: var(--text-h);
-  border: 1px solid var(--border);
 }
 
 .button--secondary:not(:disabled):hover {
   background: var(--surface-elevated);
-  border-color: var(--accent-border);
 }
 
 .button--ghost {
   background: transparent;
   color: var(--text-muted);
-  border: 1px solid transparent;
 }
 
 .button--ghost:not(:disabled):hover {
