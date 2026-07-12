@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { FileDropzone } from './components/FileDropzone'
 import { FileJobCard, type FileJob } from './components/FileJobCard'
+import { PdfSettings } from './components/PdfSettings'
 import { ProgressBar } from './components/ProgressBar'
 import {
   convertExcelToPdf,
@@ -9,6 +10,7 @@ import {
   pdfFileNameFromExcel,
   previewWorkbook,
   validateExcelFile,
+  type PdfLayoutOptions,
 } from './utils/excelToPdf'
 import type { ProgressPhase } from './utils/progress'
 import './App.css'
@@ -23,6 +25,13 @@ function App() {
   const [batchPhase, setBatchPhase] = useState<ProgressPhase | null>(null)
   const [batchActive, setBatchActive] = useState(false)
   const [globalMessage, setGlobalMessage] = useState<string | null>(null)
+  const [headerText, setHeaderText] = useState('')
+  const [footerText, setFooterText] = useState('')
+
+  const pdfLayout = useMemo<PdfLayoutOptions>(
+    () => ({ headerText, footerText }),
+    [headerText, footerText],
+  )
 
   const isBusy = useMemo(
     () =>
@@ -107,7 +116,7 @@ function App() {
     try {
       const pdfBlob = await convertExcelToPdf(job.file, (progress, phase) => {
         updateJob(job.id, { progress, phase })
-      })
+      }, pdfLayout)
 
       updateJob(job.id, {
         status: 'converted',
@@ -124,7 +133,7 @@ function App() {
         error: 'Conversion failed. Please try again.',
       })
     }
-  }, [updateJob])
+  }, [updateJob, pdfLayout])
 
   const handleConvert = async (id: string) => {
     const job = jobs.find((item) => item.id === id)
@@ -262,6 +271,14 @@ function App() {
       </header>
 
       <main className="app__main">
+        <PdfSettings
+          headerText={headerText}
+          footerText={footerText}
+          onHeaderChange={setHeaderText}
+          onFooterChange={setFooterText}
+          disabled={isBusy}
+        />
+
         <FileDropzone
           onFilesSelect={handleFilesSelect}
           disabled={isBusy}

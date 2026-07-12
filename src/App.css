@@ -58,6 +58,73 @@
   color: var(--text-muted);
 }
 
+.pdf-settings {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-settings__header h2 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  color: var(--text-h);
+}
+
+.pdf-settings__header p {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.pdf-settings__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pdf-settings__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdf-settings__field span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.pdf-settings__field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-elevated);
+  color: var(--text-h);
+  font-size: 0.925rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pdf-settings__field input:focus {
+  outline: none;
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.pdf-settings__field input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .pdf-settings__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 .dropzone {
   border: 2px dashed var(--border);
   border-radius: var(--radius-lg);

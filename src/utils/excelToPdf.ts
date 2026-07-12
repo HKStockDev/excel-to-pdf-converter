@@ -22,9 +22,17 @@ export type WorkbookPreview = {
   sheets: SheetPreview[]
 }
 
+export type PdfLayoutOptions = {
+  headerText: string
+  footerText: string
+}
+
 const ACCEPTED_EXTENSIONS = ['.xlsx', '.xls', '.csv']
 const MAX_FILE_SIZE_MB = 10
 const PDF_FONT = 'times'
+const PAGE_MARGIN = { top: 58, bottom: 48, left: 40, right: 40 }
+const HEADER_Y = 28
+const FOOTER_Y_OFFSET = 28
 
 export function validateExcelFile(file: File): string | null {
   const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
@@ -93,14 +101,58 @@ export async function previewWorkbook(
   return previewWorkbookFromBuffer(buffer, file.name)
 }
 
+function drawPageHeaderFooter(
+  pdf: jsPDF,
+  pageNumber: number,
+  totalPages: number,
+  layout: PdfLayoutOptions,
+): void {
+  const pageWidth = pdf.internal.pageSize.getWidth()
+  const pageHeight = pdf.internal.pageSize.getHeight()
+  const footerY = pageHeight - FOOTER_Y_OFFSET
+
+  pdf.setFont(PDF_FONT, 'normal')
+  pdf.setFontSize(9)
+  pdf.setTextColor(15, 39, 68)
+
+  if (layout.headerText.trim()) {
+    pdf.text(layout.headerText.trim(), pageWidth / 2, HEADER_Y, { align: 'center' })
+  }
+
+  pdf.setDrawColor(213, 221, 230)
+  pdf.setLineWidth(0.5)
+  pdf.line(PAGE_MARGIN.left, 38, pageWidth - PAGE_MARGIN.right, 38)
+
+  pdf.setTextColor(107, 124, 144)
+
+  if (layout.footerText.trim()) {
+    pdf.text(layout.footerText.trim(), PAGE_MARGIN.left, footerY)
+  }
+
+  pdf.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - PAGE_MARGIN.right, footerY, {
+    align: 'right',
+  })
+}
+
+function applyPageNumbersAndFooters(pdf: jsPDF, layout: PdfLayoutOptions): void {
+  const totalPages = pdf.getNumberOfPages()
+
+  for (let page = 1; page <= totalPages; page += 1) {
+    pdf.setPage(page)
+    drawPageHeaderFooter(pdf, page, totalPages, layout)
+  }
+}
+
 export async function convertBufferToPdf(
   buffer: ArrayBuffer,
   onProgress?: (progress: number) => void,
+  layout: PdfLayoutOptions = { headerText: '', footerText: '' },
 ): Promise<Blob> {
   const workbook = XLSX.read(buffer, { type: 'array' })
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' })
   const sheetNames = workbook.SheetNames
   const totalSheets = Math.max(sheetNames.length, 1)
+  const hasHeader = layout.headerText.trim().length > 0
 
   sheetNames.forEach((sheetName, index) => {
     if (index > 0) {
@@ -112,17 +164,19 @@ export async function convertBufferToPdf(
 
     if (rows.length === 0) {
       pdf.setFontSize(14)
-      pdf.text(`Sheet "${sheetName}" is empty.`, 40, 60)
+      pdf.setTextColor(26, 35, 50)
+      pdf.text(`Sheet "${sheetName}" is empty.`, PAGE_MARGIN.left, PAGE_MARGIN.top + 10)
     } else {
       const [headerRow, ...bodyRows] = rows
       const head = [headerRow]
       const body = bodyRows.length > 0 ? bodyRows : [headerRow.map(() => '')]
 
       pdf.setFontSize(12)
-      pdf.text(sheetName, 40, 30)
+      pdf.setTextColor(15, 39, 68)
+      pdf.text(sheetName, PAGE_MARGIN.left, hasHeader ? PAGE_MARGIN.top - 6 : 30)
 
       autoTable(pdf, {
-        startY: 45,
+        startY: hasHeader ? PAGE_MARGIN.top + 4 : 45,
         head,
         body,
         styles: {
@@ -141,12 +195,14 @@ export async function convertBufferToPdf(
         alternateRowStyles: {
           fillColor: [244, 246, 248],
         },
-        margin: { left: 40, right: 40 },
+        margin: PAGE_MARGIN,
       })
     }
 
     onProgress?.(Math.round(((index + 1) / totalSheets) * 100))
   })
+
+  applyPageNumbersAndFooters(pdf, layout)
 
   return pdf.output('blob')
 }
@@ -154,13 +210,14 @@ export async function convertBufferToPdf(
 export async function convertExcelToPdf(
   file: File,
   onProgress?: ProgressCallback,
+  layout: PdfLayoutOptions = { headerText: '', footerText: '' },
 ): Promise<Blob> {
   onProgress?.(0, 'convert')
 
   const buffer = await file.arrayBuffer()
   const blob = await convertBufferToPdf(buffer, (sheetProgress) => {
     onProgress?.(sheetProgress, 'convert')
-  })
+  }, layout)
 
   onProgress?.(100, 'convert')
   return blob
