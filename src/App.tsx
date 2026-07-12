@@ -259,106 +259,129 @@ function App() {
 
   const readyCount = jobs.filter((job) => job.status === 'ready').length
   const convertedCount = jobs.filter((job) => job.pdfBlob).length
+  const hasFiles = jobs.length > 0
+
+  const pdfSettingsBlock = (
+    <div id="pdf-settings">
+      <PdfSettings
+        headerText={headerText}
+        footerText={footerText}
+        onHeaderChange={setHeaderText}
+        onFooterChange={setFooterText}
+        disabled={isBusy}
+      />
+    </div>
+  )
+
+  const uploadBlock = (
+    <div id="upload">
+      <FileDropzone
+        onFilesSelect={handleFilesSelect}
+        disabled={isBusy}
+        fileCount={jobs.length}
+      />
+    </div>
+  )
 
   return (
     <>
       <PageHeader fileCount={jobs.length} />
 
-      <div className="app">
-        {jobs.length > 0 && (
-          <section className="batch-toolbar" id="file-queue">
-            <h2 className="batch-toolbar__title">Conversion queue</h2>
-            <p className="batch-toolbar__meta">
-              {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
-              {convertedCount} converted
-            </p>
-            <div className="batch-toolbar__actions">
-              <button
-                type="button"
-                className="button button--primary button--sm"
-                onClick={handleConvertAll}
-                disabled={isBusy || readyCount === 0}
-              >
-                Convert All
-              </button>
-              <button
-                type="button"
-                className="button button--secondary button--sm"
-                onClick={handleDownloadAll}
-                disabled={isBusy || convertedCount === 0}
-              >
-                Download All
-              </button>
-              <button
-                type="button"
-                className="button button--ghost button--sm"
-                onClick={handleClearAll}
-                disabled={isBusy}
-              >
-                Clear All
-              </button>
-            </div>
+      <div className={`app${hasFiles ? ' app--with-sidebar' : ''}`}>
+        <div className="app__body">
+          {hasFiles && (
+            <aside className="app__sidebar" aria-label="Upload and PDF settings">
+              {pdfSettingsBlock}
+              {uploadBlock}
+            </aside>
+          )}
 
-            <ProgressBar
-              progress={batchProgress}
-              phase={batchPhase}
-              visible={batchActive}
-            />
-          </section>
-        )}
+          <div className="app__content">
+            {hasFiles && (
+              <section className="batch-toolbar" id="file-queue">
+                <h2 className="batch-toolbar__title">Conversion queue</h2>
+                <p className="batch-toolbar__meta">
+                  {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
+                  {convertedCount} converted
+                </p>
+                <div className="batch-toolbar__actions">
+                  <button
+                    type="button"
+                    className="button button--primary button--sm"
+                    onClick={handleConvertAll}
+                    disabled={isBusy || readyCount === 0}
+                  >
+                    Convert All
+                  </button>
+                  <button
+                    type="button"
+                    className="button button--secondary button--sm"
+                    onClick={handleDownloadAll}
+                    disabled={isBusy || convertedCount === 0}
+                  >
+                    Download All
+                  </button>
+                  <button
+                    type="button"
+                    className="button button--ghost button--sm"
+                    onClick={handleClearAll}
+                    disabled={isBusy}
+                  >
+                    Clear All
+                  </button>
+                </div>
 
-      <main className="app__main">
-        <div id="pdf-settings">
-          <PdfSettings
-            headerText={headerText}
-            footerText={footerText}
-            onHeaderChange={setHeaderText}
-            onFooterChange={setFooterText}
-            disabled={isBusy}
-          />
-        </div>
+                <ProgressBar
+                  progress={batchProgress}
+                  phase={batchPhase}
+                  visible={batchActive}
+                />
+              </section>
+            )}
 
-        <div id="upload">
-          <FileDropzone
-            onFilesSelect={handleFilesSelect}
-            disabled={isBusy}
-            fileCount={jobs.length}
-          />
-        </div>
+            <main className="app__main">
+              {!hasFiles && (
+                <>
+                  {pdfSettingsBlock}
+                  {uploadBlock}
+                </>
+              )}
 
-        {globalMessage && <p className="status status--success">{globalMessage}</p>}
+              {globalMessage && <p className="status status--success">{globalMessage}</p>}
 
-        {jobs.length > 0 && (
-          <div className="file-table-wrap">
-            <table className="file-table">
-              <thead>
-                <tr>
-                  <th scope="col">File</th>
-                  <th scope="col">Sheets</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map((job) => (
-                  <FileJobCard
-                    key={job.id}
-                    job={job}
-                    onConvert={handleConvert}
-                    onDownload={handleDownload}
-                    onRemove={handleRemove}
-                    disabled={isBusy && !['uploading', 'converting', 'downloading'].includes(job.status)}
-                  />
-                ))}
-              </tbody>
-            </table>
+              {hasFiles && (
+                <div className="file-table-wrap">
+                  <table className="file-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">File</th>
+                        <th scope="col">Sheets</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {jobs.map((job) => (
+                        <FileJobCard
+                          key={job.id}
+                          job={job}
+                          onConvert={handleConvert}
+                          onDownload={handleDownload}
+                          onRemove={handleRemove}
+                          disabled={isBusy && !['uploading', 'converting', 'downloading'].includes(job.status)}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </main>
           </div>
-        )}
-      </main>
+        </div>
 
-      <footer className="app__footer">
-        <p>Secure client-side processing · Files never leave your browser</p>
-      </footer>
+        <footer className="app__footer">
+          <p>Secure client-side processing · Files never leave your browser</p>
+        </footer>
       </div>
     </>
   )

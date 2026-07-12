@@ -113,7 +113,7 @@ function drawPageHeaderFooter(
 
   pdf.setFont(PDF_FONT, 'normal')
   pdf.setFontSize(9)
-  pdf.setTextColor(15, 39, 68)
+  pdf.setTextColor(31, 78, 121)
 
   if (layout.headerText.trim()) {
     pdf.text(layout.headerText.trim(), pageWidth / 2, HEADER_Y, { align: 'center' })
@@ -172,7 +172,7 @@ export async function convertBufferToPdf(
       const body = bodyRows.length > 0 ? bodyRows : [headerRow.map(() => '')]
 
       pdf.setFontSize(12)
-      pdf.setTextColor(15, 39, 68)
+      pdf.setTextColor(31, 78, 121)
       pdf.text(sheetName, PAGE_MARGIN.left, hasHeader ? PAGE_MARGIN.top - 6 : 30)
 
       autoTable(pdf, {
@@ -189,11 +189,11 @@ export async function convertBufferToPdf(
         headStyles: {
           font: PDF_FONT,
           fontStyle: 'bold',
-          fillColor: [15, 39, 68],
+          fillColor: [31, 78, 121],
           textColor: 255,
         },
         alternateRowStyles: {
-          fillColor: [244, 246, 248],
+          fillColor: [217, 234, 247],
         },
         margin: PAGE_MARGIN,
       })

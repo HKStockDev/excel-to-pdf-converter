@@ -4,7 +4,7 @@
   z-index: 100;
   background: var(--accent);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 2px 12px rgba(15, 39, 68, 0.18);
+  box-shadow: 0 2px 12px rgba(31, 78, 121, 0.2);
 }
 
 .page-header__inner {
@@ -106,6 +106,42 @@
   padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 32px) clamp(24px, 4vw, 40px);
 }
 
+.app--with-sidebar {
+  max-width: 1280px;
+}
+
+.app__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3vw, 24px);
+}
+
+.app--with-sidebar .app__body {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: clamp(20px, 3vw, 28px);
+}
+
+.app__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: calc(69px + clamp(16px, 3vw, 24px));
+}
+
+.app__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3vw, 24px);
+}
+
 .app__main {
   flex: 1;
   display: flex;
@@ -147,6 +183,32 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.app__sidebar .pdf-settings {
+  padding: 16px;
+}
+
+.app__sidebar .pdf-settings__fields {
+  grid-template-columns: 1fr;
+}
+
+.app__sidebar .dropzone {
+  padding: 24px 16px;
+}
+
+.app__sidebar .dropzone__icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 12px;
+}
+
+.app__sidebar .dropzone__title {
+  font-size: 0.95rem;
+}
+
+.app__sidebar .dropzone__hint {
+  font-size: 0.8rem;
 }
 
 .pdf-settings__field {
@@ -512,7 +574,7 @@
 }
 
 .progress__fill--upload {
-  background: linear-gradient(90deg, #1a3a5c, #2d5a8e);
+  background: linear-gradient(90deg, #1f4e79, #2d6ba3);
 }
 
 .progress__fill--convert {
@@ -609,6 +671,16 @@
   .page-header__nav {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .app--with-sidebar .app__body {
+    flex-direction: column;
+  }
+
+  .app__sidebar {
+    position: static;
+    max-width: none;
+    width: 100%;
   }
 
   .batch-toolbar {
