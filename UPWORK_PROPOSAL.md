@@ -32,7 +32,8 @@ For this scope, I recommend a **client-side React app** (no server needed for ba
 
 I’ve built similar React apps with file uploads and document processing. I prepared a working demo for this exact use case:
 
-- **Demo repo:** `excel-to-pdf-converter/` (React + TypeScript + Vite)
+- **Live demo:** https://excel-to-pdf-converter-orpin.vercel.app
+- **Demo repo:** https://github.com/HKStockDev/excel-to-pdf-converter
 - **Stack:** SheetJS for Excel parsing, jsPDF for PDF output
 - **Focus:** Clean code, smooth UX, easy to deploy on Vercel/Netlify
 
