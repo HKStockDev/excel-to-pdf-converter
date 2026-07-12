@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { FileDropzone } from './components/FileDropzone'
 import { FileJobCard, type FileJob } from './components/FileJobCard'
+import { PageHeader } from './components/PageHeader'
 import { PdfSettings } from './components/PdfSettings'
 import { ProgressBar } from './components/ProgressBar'
 import {
@@ -260,19 +261,22 @@ function App() {
   const convertedCount = jobs.filter((job) => job.pdfBlob).length
 
   return (
-    <div className="app">
-      <div className="app__top">
-        <header className="app__header">
-          <p className="app__eyebrow">Document Conversion Suite</p>
-          <h1>Excel to PDF Converter</h1>
-          <p className="app__subtitle">
-            Upload one or multiple spreadsheets, track progress at every step, and download
-            polished PDF documents formatted in Times New Roman.
-          </p>
-        </header>
+    <>
+      <PageHeader fileCount={jobs.length} />
 
-        {jobs.length > 0 && (
-          <section className="batch-toolbar">
+      <div className="app">
+        <div className="app__top">
+          <header className="app__hero">
+            <p className="app__eyebrow">Professional Document Tools</p>
+            <h1>Convert Excel spreadsheets to PDF</h1>
+            <p className="app__subtitle">
+              Upload one or multiple spreadsheets, track progress at every step, and download
+              polished PDF documents formatted in Times New Roman.
+            </p>
+          </header>
+
+          {jobs.length > 0 && (
+            <section className="batch-toolbar" id="file-queue">
             <h2 className="batch-toolbar__title">Conversion queue</h2>
             <p className="batch-toolbar__meta">
               {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
@@ -315,19 +319,23 @@ function App() {
       </div>
 
       <main className="app__main">
-        <PdfSettings
-          headerText={headerText}
-          footerText={footerText}
-          onHeaderChange={setHeaderText}
-          onFooterChange={setFooterText}
-          disabled={isBusy}
-        />
+        <div id="pdf-settings">
+          <PdfSettings
+            headerText={headerText}
+            footerText={footerText}
+            onHeaderChange={setHeaderText}
+            onFooterChange={setFooterText}
+            disabled={isBusy}
+          />
+        </div>
 
-        <FileDropzone
-          onFilesSelect={handleFilesSelect}
-          disabled={isBusy}
-          fileCount={jobs.length}
-        />
+        <div id="upload">
+          <FileDropzone
+            onFilesSelect={handleFilesSelect}
+            disabled={isBusy}
+            fileCount={jobs.length}
+          />
+        </div>
 
         {globalMessage && <p className="status status--success">{globalMessage}</p>}
 
@@ -362,7 +370,8 @@ function App() {
       <footer className="app__footer">
         <p>Secure client-side processing · Files never leave your browser</p>
       </footer>
-    </div>
+      </div>
+    </>
   )
 }
 
