@@ -20,8 +20,10 @@
   --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
   --radius: 5px;
   --radius-lg: 5px;
+  --font-base: 18px;
 
   font-family: 'Times New Roman', Times, serif;
+  font-size: var(--font-base);
   line-height: 1.55;
   font-weight: 400;
   color: var(--text);

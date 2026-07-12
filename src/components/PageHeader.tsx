@@ -16,10 +16,7 @@ export function PageHeader({ fileCount = 0 }: PageHeaderProps) {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <span className="page-header__logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6" />
-              <path d="M7 8h10M7 12h10M7 16h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
+            <img src="/logo.png" alt="" width={40} height={40} />
           </span>
           <span className="page-header__brand-text">
             <span className="page-header__title">Excel to PDF Converter</span>
