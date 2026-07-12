@@ -24,18 +24,18 @@
   --shadow-md: 0 8px 24px rgba(60, 64, 67, 0.1);
   --radius: 5px;
   --radius-lg: 5px;
-  --font-base: 17px;
-  --text-xs: 0.9375rem;
-  --text-sm: 1rem;
-  --text-md: 1.0625rem;
-  --text-lg: 1.1875rem;
-  --text-xl: 1.3125rem;
-  --text-2xl: 1.5rem;
+  --font-base: 14px;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.1875rem;
+  --text-2xl: 1.3125rem;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   font-family: var(--font-sans);
   font-size: var(--font-base);
-  line-height: 1.6;
+  line-height: 1.55;
   font-weight: 400;
   color: var(--text);
   background: var(--bg);

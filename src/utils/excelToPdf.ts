@@ -1,15 +1,20 @@
-import { jsPDF } from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import JSZip from 'jszip'
 import * as XLSX from 'xlsx'
 import {
+  convertBufferToPdfCore,
+  type PdfLayoutOptions,
+} from './convertCore'
+import { convertBufferWithWorker } from './convertWorkerClient'
+import {
+  createThrottledProgressReporter,
   delay,
   runProgressSteps,
+  yieldToMain,
   type ProgressCallback,
   type ProgressPhase,
 } from './progress'
 
-export type { ProgressCallback, ProgressPhase }
+export type { ProgressCallback, ProgressPhase, PdfLayoutOptions }
 
 export type SheetPreview = {
   name: string
@@ -22,17 +27,10 @@ export type WorkbookPreview = {
   sheets: SheetPreview[]
 }
 
-export type PdfLayoutOptions = {
-  headerText: string
-  footerText: string
-}
-
 const ACCEPTED_EXTENSIONS = ['.xlsx', '.xls', '.csv']
 const MAX_FILE_SIZE_MB = 10
-const PDF_FONT = 'helvetica'
-const PAGE_MARGIN = { top: 58, bottom: 48, left: 40, right: 40 }
-const HEADER_Y = 28
-const FOOTER_Y_OFFSET = 28
+/** Files above this threshold convert in a Web Worker to keep the UI responsive. */
+export const LARGE_FILE_BYTES = 512 * 1024
 
 export function validateExcelFile(file: File): string | null {
   const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
@@ -101,110 +99,19 @@ export async function previewWorkbook(
   return previewWorkbookFromBuffer(buffer, file.name)
 }
 
-function drawPageHeaderFooter(
-  pdf: jsPDF,
-  pageNumber: number,
-  totalPages: number,
-  layout: PdfLayoutOptions,
-): void {
-  const pageWidth = pdf.internal.pageSize.getWidth()
-  const pageHeight = pdf.internal.pageSize.getHeight()
-  const footerY = pageHeight - FOOTER_Y_OFFSET
-
-  pdf.setFont(PDF_FONT, 'normal')
-  pdf.setFontSize(9)
-  pdf.setTextColor(15, 23, 42)
-
-  if (layout.headerText.trim()) {
-    pdf.text(layout.headerText.trim(), pageWidth / 2, HEADER_Y, { align: 'center' })
-  }
-
-  pdf.setDrawColor(213, 221, 230)
-  pdf.setLineWidth(0.5)
-  pdf.line(PAGE_MARGIN.left, 38, pageWidth - PAGE_MARGIN.right, 38)
-
-  pdf.setTextColor(107, 124, 144)
-
-  if (layout.footerText.trim()) {
-    pdf.text(layout.footerText.trim(), PAGE_MARGIN.left, footerY)
-  }
-
-  pdf.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - PAGE_MARGIN.right, footerY, {
-    align: 'right',
-  })
-}
-
-function applyPageNumbersAndFooters(pdf: jsPDF, layout: PdfLayoutOptions): void {
-  const totalPages = pdf.getNumberOfPages()
-
-  for (let page = 1; page <= totalPages; page += 1) {
-    pdf.setPage(page)
-    drawPageHeaderFooter(pdf, page, totalPages, layout)
-  }
-}
-
 export async function convertBufferToPdf(
   buffer: ArrayBuffer,
   onProgress?: (progress: number) => void,
   layout: PdfLayoutOptions = { headerText: '', footerText: '' },
 ): Promise<Blob> {
-  const workbook = XLSX.read(buffer, { type: 'array' })
-  const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' })
-  const sheetNames = workbook.SheetNames
-  const totalSheets = Math.max(sheetNames.length, 1)
-  const hasHeader = layout.headerText.trim().length > 0
+  const pdfBuffer = await convertBufferToPdfCore(
+    buffer,
+    layout,
+    onProgress,
+    yieldToMain,
+  )
 
-  sheetNames.forEach((sheetName, index) => {
-    if (index > 0) {
-      pdf.addPage()
-    }
-
-    const rows = sheetToRows(workbook.Sheets[sheetName])
-    pdf.setFont(PDF_FONT, 'normal')
-
-    if (rows.length === 0) {
-      pdf.setFontSize(14)
-      pdf.setTextColor(26, 35, 50)
-      pdf.text(`Sheet "${sheetName}" is empty.`, PAGE_MARGIN.left, PAGE_MARGIN.top + 10)
-    } else {
-      const [headerRow, ...bodyRows] = rows
-      const head = [headerRow]
-      const body = bodyRows.length > 0 ? bodyRows : [headerRow.map(() => '')]
-
-      pdf.setFontSize(12)
-      pdf.setTextColor(15, 23, 42)
-      pdf.text(sheetName, PAGE_MARGIN.left, hasHeader ? PAGE_MARGIN.top - 6 : 30)
-
-      autoTable(pdf, {
-        startY: hasHeader ? PAGE_MARGIN.top + 4 : 45,
-        head,
-        body,
-        styles: {
-          font: PDF_FONT,
-          fontSize: 9,
-          cellPadding: 4,
-          overflow: 'linebreak',
-          textColor: [26, 35, 50],
-        },
-        headStyles: {
-          font: PDF_FONT,
-          fontStyle: 'bold',
-          fillColor: [15, 23, 42],
-          textColor: 255,
-        },
-        alternateRowStyles: {
-          fillColor: [255, 247, 237],
-        },
-        margin: PAGE_MARGIN,
-      })
-    }
-
-    onProgress?.(Math.round(((index + 1) / totalSheets) * 100))
-  })
-
-  applyPageNumbersAndFooters(pdf, layout)
-
-  return pdf.output('blob')
+  return new Blob([pdfBuffer], { type: 'application/pdf' })
 }
 
 export async function convertExcelToPdf(
@@ -215,11 +122,21 @@ export async function convertExcelToPdf(
   onProgress?.(0, 'convert')
 
   const buffer = await file.arrayBuffer()
-  const blob = await convertBufferToPdf(buffer, (sheetProgress) => {
-    onProgress?.(sheetProgress, 'convert')
+  onProgress?.(3, 'convert')
+
+  if (file.size > LARGE_FILE_BYTES) {
+    return convertBufferWithWorker(buffer, layout, onProgress)
+  }
+
+  const reporter = onProgress
+    ? createThrottledProgressReporter(onProgress, 'convert')
+    : null
+
+  const blob = await convertBufferToPdf(buffer, (progress) => {
+    reporter?.report(progress)
   }, layout)
 
-  onProgress?.(100, 'convert')
+  reporter?.flush(100)
   return blob
 }
 
