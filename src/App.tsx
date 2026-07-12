@@ -265,18 +265,8 @@ function App() {
       <PageHeader fileCount={jobs.length} />
 
       <div className="app">
-        <div className="app__top">
-          <header className="app__hero">
-            <p className="app__eyebrow">Professional Document Tools</p>
-            <h1>Convert Excel spreadsheets to PDF</h1>
-            <p className="app__subtitle">
-              Upload one or multiple spreadsheets, track progress at every step, and download
-              polished PDF documents formatted in Times New Roman.
-            </p>
-          </header>
-
-          {jobs.length > 0 && (
-            <section className="batch-toolbar" id="file-queue">
+        {jobs.length > 0 && (
+          <section className="batch-toolbar" id="file-queue">
             <h2 className="batch-toolbar__title">Conversion queue</h2>
             <p className="batch-toolbar__meta">
               {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
@@ -316,7 +306,6 @@ function App() {
             />
           </section>
         )}
-      </div>
 
       <main className="app__main">
         <div id="pdf-settings">
