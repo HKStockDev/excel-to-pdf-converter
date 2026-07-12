@@ -29,7 +29,7 @@ export type PdfLayoutOptions = {
 
 const ACCEPTED_EXTENSIONS = ['.xlsx', '.xls', '.csv']
 const MAX_FILE_SIZE_MB = 10
-const PDF_FONT = 'times'
+const PDF_FONT = 'helvetica'
 const PAGE_MARGIN = { top: 58, bottom: 48, left: 40, right: 40 }
 const HEADER_Y = 28
 const FOOTER_Y_OFFSET = 28
