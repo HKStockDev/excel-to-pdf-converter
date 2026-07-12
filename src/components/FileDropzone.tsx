@@ -1,24 +1,24 @@
-import { useRef, useState, type DragEvent, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 
 type FileDropzoneProps = {
-  onFileSelect: (file: File) => void
+  onFilesSelect: (files: File[]) => void
   disabled?: boolean
-  selectedFileName?: string | null
+  fileCount?: number
 }
 
 export function FileDropzone({
-  onFileSelect,
+  onFilesSelect,
   disabled = false,
-  selectedFileName,
+  fileCount = 0,
 }: FileDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
   const handleFiles = (files: FileList | null) => {
-    const file = files?.[0]
-    if (file) {
-      onFileSelect(file)
+    if (!files || files.length === 0) {
+      return
     }
+    onFilesSelect(Array.from(files))
   }
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -61,6 +61,7 @@ export function FileDropzone({
         ref={inputRef}
         type="file"
         accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv"
+        multiple
         hidden
         disabled={disabled}
         onChange={onInputChange}
@@ -79,11 +80,14 @@ export function FileDropzone({
       </div>
 
       <p className="dropzone__title">
-        {selectedFileName ? 'Replace Excel file' : 'Drop your Excel file here'}
+        {fileCount > 0 ? 'Add more Excel files' : 'Drop your Excel files here'}
       </p>
       <p className="dropzone__hint">
-        {selectedFileName ?? 'or click to browse (.xlsx, .xls, .csv)'}
+        or click to browse · multiple files supported (.xlsx, .xls, .csv)
       </p>
+      {fileCount > 0 && (
+        <p className="dropzone__count">{fileCount} file{fileCount !== 1 ? 's' : ''} in queue</p>
+      )}
     </div>
   )
 }
