@@ -65,68 +65,73 @@ export function FileJobCard({
   const showProgress = isBusy || (job.progress > 0 && job.progress < 100)
 
   return (
-    <article className={`file-card file-card--${job.status}`}>
-      <div className="file-card__top">
-        <div className="file-card__info">
-          <h3 className="file-card__name">{job.file.name}</h3>
-          <p className="file-card__meta">
-            {formatFileSize(job.file.size)}
-            {job.preview && (
-              <>
-                {' · '}
-                {job.preview.sheets.length} sheet{job.preview.sheets.length !== 1 ? 's' : ''}
-              </>
-            )}
-          </p>
-        </div>
-        <span className={`file-card__badge file-card__badge--${job.status}`}>
+    <tr className={`file-table__row file-table__row--${job.status}`}>
+      <td className="file-table__cell file-table__cell--file">
+        <span className="file-table__name">{job.file.name}</span>
+        <span className="file-table__meta">
+          {formatFileSize(job.file.size)}
+          {job.preview && (
+            <>
+              {' · '}
+              {job.preview.sheets.length} sheet{job.preview.sheets.length !== 1 ? 's' : ''}
+            </>
+          )}
+        </span>
+        {job.error && <span className="file-table__error">{job.error}</span>}
+      </td>
+
+      <td className="file-table__cell file-table__cell--sheets">
+        {job.preview && job.preview.sheets.length > 0 ? (
+          <ul className="file-table__sheets">
+            {job.preview.sheets.map((sheet) => (
+              <li key={sheet.name}>
+                <span className="file-table__sheet-name">{sheet.name}</span>
+                <span className="file-table__sheet-meta">
+                  {sheet.rowCount} rows · {sheet.columnCount} cols
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <span className="file-table__placeholder">—</span>
+        )}
+      </td>
+
+      <td className="file-table__cell file-table__cell--status">
+        <span className={`file-table__badge file-table__badge--${job.status}`}>
           {statusLabel(job.status)}
         </span>
-      </div>
+        <ProgressBar progress={job.progress} phase={job.phase} visible={showProgress} size="sm" />
+      </td>
 
-      <ProgressBar progress={job.progress} phase={job.phase} visible={showProgress} size="sm" />
-
-      {job.error && <p className="file-card__error">{job.error}</p>}
-
-      {job.preview && job.preview.sheets.length > 0 && (
-        <ul className="file-card__sheets">
-          {job.preview.sheets.map((sheet) => (
-            <li key={sheet.name}>
-              <span>{sheet.name}</span>
-              <span>
-                {sheet.rowCount} rows · {sheet.columnCount} cols
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="file-card__actions">
-        <button
-          type="button"
-          className="button button--primary button--sm"
-          onClick={() => onConvert(job.id)}
-          disabled={disabled || isBusy || job.status === 'converting'}
-        >
-          Convert
-        </button>
-        <button
-          type="button"
-          className="button button--secondary button--sm"
-          onClick={() => onDownload(job.id)}
-          disabled={disabled || isBusy || !job.pdfBlob}
-        >
-          Download PDF
-        </button>
-        <button
-          type="button"
-          className="button button--ghost button--sm"
-          onClick={() => onRemove(job.id)}
-          disabled={disabled || isBusy}
-        >
-          Remove
-        </button>
-      </div>
-    </article>
+      <td className="file-table__cell file-table__cell--actions">
+        <div className="file-table__actions">
+          <button
+            type="button"
+            className="button button--primary button--sm"
+            onClick={() => onConvert(job.id)}
+            disabled={disabled || isBusy || job.status === 'converting'}
+          >
+            Convert
+          </button>
+          <button
+            type="button"
+            className="button button--secondary button--sm"
+            onClick={() => onDownload(job.id)}
+            disabled={disabled || isBusy || !job.pdfBlob}
+          >
+            Download PDF
+          </button>
+          <button
+            type="button"
+            className="button button--ghost button--sm"
+            onClick={() => onRemove(job.id)}
+            disabled={disabled || isBusy}
+          >
+            Remove
+          </button>
+        </div>
+      </td>
+    </tr>
   )
 }

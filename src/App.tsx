@@ -261,14 +261,58 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app__header">
-        <p className="app__eyebrow">Document Conversion Suite</p>
-        <h1>Excel to PDF Converter</h1>
-        <p className="app__subtitle">
-          Upload one or multiple spreadsheets, track progress at every step, and download
-          polished PDF documents formatted in Times New Roman.
-        </p>
-      </header>
+      <div className="app__top">
+        <header className="app__header">
+          <p className="app__eyebrow">Document Conversion Suite</p>
+          <h1>Excel to PDF Converter</h1>
+          <p className="app__subtitle">
+            Upload one or multiple spreadsheets, track progress at every step, and download
+            polished PDF documents formatted in Times New Roman.
+          </p>
+        </header>
+
+        {jobs.length > 0 && (
+          <section className="batch-toolbar">
+            <h2 className="batch-toolbar__title">Conversion queue</h2>
+            <p className="batch-toolbar__meta">
+              {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
+              {convertedCount} converted
+            </p>
+            <div className="batch-toolbar__actions">
+              <button
+                type="button"
+                className="button button--primary button--sm"
+                onClick={handleConvertAll}
+                disabled={isBusy || readyCount === 0}
+              >
+                Convert All
+              </button>
+              <button
+                type="button"
+                className="button button--secondary button--sm"
+                onClick={handleDownloadAll}
+                disabled={isBusy || convertedCount === 0}
+              >
+                Download All
+              </button>
+              <button
+                type="button"
+                className="button button--ghost button--sm"
+                onClick={handleClearAll}
+                disabled={isBusy}
+              >
+                Clear All
+              </button>
+            </div>
+
+            <ProgressBar
+              progress={batchProgress}
+              phase={batchPhase}
+              visible={batchActive}
+            />
+          </section>
+        )}
+      </div>
 
       <main className="app__main">
         <PdfSettings
@@ -285,66 +329,32 @@ function App() {
           fileCount={jobs.length}
         />
 
-        {jobs.length > 0 && (
-          <section className="batch-panel">
-            <div className="batch-panel__header">
-              <div>
-                <h2>Conversion queue</h2>
-                <p>
-                  {jobs.length} file{jobs.length !== 1 ? 's' : ''} · {readyCount} ready ·{' '}
-                  {convertedCount} converted
-                </p>
-              </div>
-              <div className="batch-panel__actions">
-                <button
-                  type="button"
-                  className="button button--primary"
-                  onClick={handleConvertAll}
-                  disabled={isBusy || readyCount === 0}
-                >
-                  Convert All
-                </button>
-                <button
-                  type="button"
-                  className="button button--secondary"
-                  onClick={handleDownloadAll}
-                  disabled={isBusy || convertedCount === 0}
-                >
-                  Download All
-                </button>
-                <button
-                  type="button"
-                  className="button button--ghost"
-                  onClick={handleClearAll}
-                  disabled={isBusy}
-                >
-                  Clear All
-                </button>
-              </div>
-            </div>
-
-            <ProgressBar
-              progress={batchProgress}
-              phase={batchPhase}
-              visible={batchActive}
-            />
-          </section>
-        )}
-
         {globalMessage && <p className="status status--success">{globalMessage}</p>}
 
         {jobs.length > 0 && (
-          <div className="file-list">
-            {jobs.map((job) => (
-              <FileJobCard
-                key={job.id}
-                job={job}
-                onConvert={handleConvert}
-                onDownload={handleDownload}
-                onRemove={handleRemove}
-                disabled={isBusy && !['uploading', 'converting', 'downloading'].includes(job.status)}
-              />
-            ))}
+          <div className="file-table-wrap">
+            <table className="file-table">
+              <thead>
+                <tr>
+                  <th scope="col">File</th>
+                  <th scope="col">Sheets</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map((job) => (
+                  <FileJobCard
+                    key={job.id}
+                    job={job}
+                    onConvert={handleConvert}
+                    onDownload={handleDownload}
+                    onRemove={handleRemove}
+                    disabled={isBusy && !['uploading', 'converting', 'downloading'].includes(job.status)}
+                  />
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </main>
