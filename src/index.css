@@ -1,31 +1,41 @@
 :root {
-  --primary: #0f172a;
-  --primary-light: #1e293b;
-  --accent: #f97316;
-  --accent-light: #fb923c;
-  --accent-bg: rgba(249, 115, 22, 0.1);
-  --accent-border: rgba(249, 115, 22, 0.35);
-  --text: #334155;
-  --text-h: #0f172a;
-  --text-muted: #64748b;
-  --bg: #f8fafc;
+  --primary: #4285f4;
+  --primary-light: #669df6;
+  --primary-dark: #3367d6;
+  --primary-bg: rgba(66, 133, 244, 0.1);
+  --primary-border: rgba(66, 133, 244, 0.35);
+  --secondary: #f8f9fa;
+  --accent: #34a853;
+  --accent-light: #4caf60;
+  --accent-bg: rgba(52, 168, 83, 0.1);
+  --accent-border: rgba(52, 168, 83, 0.35);
+  --text: #3c4043;
+  --text-h: #202124;
+  --text-muted: #5f6368;
+  --bg: #f8f9fa;
   --surface: #ffffff;
-  --surface-elevated: #fff7ed;
-  --border: #e2e8f0;
-  --success: #1f6b45;
-  --success-bg: rgba(31, 107, 69, 0.1);
-  --error: #b42318;
-  --error-bg: rgba(180, 35, 24, 0.08);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.1);
+  --surface-elevated: #f8f9fa;
+  --border: #dadce0;
+  --success: #34a853;
+  --success-bg: rgba(52, 168, 83, 0.1);
+  --error: #d93025;
+  --error-bg: rgba(217, 48, 37, 0.08);
+  --shadow-sm: 0 1px 3px rgba(60, 64, 67, 0.08);
+  --shadow-md: 0 8px 24px rgba(60, 64, 67, 0.1);
   --radius: 5px;
   --radius-lg: 5px;
-  --font-base: 18px;
+  --font-base: 17px;
+  --text-xs: 0.9375rem;
+  --text-sm: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: 1.5rem;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   font-family: var(--font-sans);
   font-size: var(--font-base);
-  line-height: 1.55;
+  line-height: 1.6;
   font-weight: 400;
   color: var(--text);
   background: var(--bg);
@@ -46,7 +56,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #f1f5f9 100%);
+    linear-gradient(180deg, #ffffff 0%, #f8f9fa 45%, #f1f3f4 100%);
 }
 
 #root {
