@@ -261,25 +261,24 @@ function App() {
   const convertedCount = jobs.filter((job) => job.pdfBlob).length
   const hasFiles = jobs.length > 0
 
-  const pdfSettingsBlock = (
-    <div id="pdf-settings">
-      <PdfSettings
-        headerText={headerText}
-        footerText={footerText}
-        onHeaderChange={setHeaderText}
-        onFooterChange={setFooterText}
-        disabled={isBusy}
-      />
-    </div>
-  )
-
-  const uploadBlock = (
-    <div id="upload">
-      <FileDropzone
-        onFilesSelect={handleFilesSelect}
-        disabled={isBusy}
-        fileCount={jobs.length}
-      />
+  const settingsPanel = (
+    <div className="settings-panel">
+      <div id="pdf-settings">
+        <PdfSettings
+          headerText={headerText}
+          footerText={footerText}
+          onHeaderChange={setHeaderText}
+          onFooterChange={setFooterText}
+          disabled={isBusy}
+        />
+      </div>
+      <div id="upload">
+        <FileDropzone
+          onFilesSelect={handleFilesSelect}
+          disabled={isBusy}
+          fileCount={jobs.length}
+        />
+      </div>
     </div>
   )
 
@@ -291,8 +290,7 @@ function App() {
         <div className="app__body">
           {hasFiles && (
             <aside className="app__sidebar" aria-label="Upload and PDF settings">
-              {pdfSettingsBlock}
-              {uploadBlock}
+              {settingsPanel}
             </aside>
           )}
 
@@ -340,12 +338,7 @@ function App() {
             )}
 
             <main className="app__main">
-              {!hasFiles && (
-                <>
-                  {pdfSettingsBlock}
-                  {uploadBlock}
-                </>
-              )}
+              {!hasFiles && settingsPanel}
 
               {globalMessage && <p className="status status--success">{globalMessage}</p>}
 
